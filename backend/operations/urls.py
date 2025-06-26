@@ -1,11 +1,22 @@
-from django.urls import path
-from .views import UploadCSVView, InboundViewSet, OutboundViewSet
-from rest_framework.routers import DefaultRouter
+from rest_framework import routers
+from django.urls import path, include
+from .views import (
+    ProductViewSet,
+    SupplierViewSet,
+    CustomerViewSet,
+    InboundViewSet,
+    OutboundViewSet,
+    UploadCSVView,
+)
 
-router = DefaultRouter()
-router.register(r'inbound', InboundViewSet)
-router.register(r'outbound', OutboundViewSet)
+router = routers.DefaultRouter()
+router.register('products', ProductViewSet)
+router.register('suppliers', SupplierViewSet)
+router.register('customers', CustomerViewSet)
+router.register('inbound', InboundViewSet)
+router.register('outbound', OutboundViewSet)
 
-urlpatterns = router.urls + [
-    path('upload_csv/', UploadCSVView.as_view(), name='upload_csv')
+urlpatterns = [
+    path('', include(router.urls)),
+    path('upload-csv/', UploadCSVView.as_view(), name='upload-csv'),
 ]

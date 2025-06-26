@@ -4,21 +4,25 @@ import Inventory from './pages/Inventory';
 import Inbound from './pages/Inbound';
 import Outbound from './pages/Outbound';
 import UploadCSV from './pages/UploadCSV';
-import Navbar from './components/Navbar';
-
+import MainLayout from './layouts/MainLayout';
 
 function App() {
-  const isAuthenticated = !!localStorage.getItem('access_token');
-
   return (
     <Router>
-      {isAuthenticated && <Navbar />}
       <Routes>
-        <Route path="/upload" element={<UploadCSV />} />
+        {/* Login: no navbar */}
         <Route path="/login" element={<Login />} />
-        <Route path="/inventory" element={<Inventory />} />
-        <Route path="/inbound" element={<Inbound />} />
-        <Route path="/outbound" element={<Outbound />} />
+
+        {/* Protected routes with layout */}
+        <Route element={<MainLayout />}>
+          <Route path="/inventory" element={<Inventory />} />
+          <Route path="/inbound" element={<Inbound />} />
+          <Route path="/outbound" element={<Outbound />} />
+          <Route path="/upload-csv" element={<UploadCSV />} />
+        </Route>
+
+        {/* Default redirect */}
+        <Route path="*" element={<Login />} />
       </Routes>
     </Router>
   );

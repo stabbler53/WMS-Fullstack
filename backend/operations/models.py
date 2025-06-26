@@ -1,32 +1,58 @@
 from django.db import models
+from core.models import Product, Supplier, Customer
+from django.utils import timezone
 
-# Create your models here.
-from inventory.models import Product
-from core.models import Supplier, Customer
-
-
+# ✅ Inbound Model (stock received)
 class Inbound(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    supplier = models.ForeignKey(Supplier, on_delete=models.SET_NULL, null=True, blank=True)
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, related_name='inbounds_core'
+    )
+    supplier = models.ForeignKey(
+        Supplier, on_delete=models.SET_NULL, null=True, blank=True, related_name='supplied_inbounds_core'
+    )
     quantity = models.PositiveIntegerField()
     invoice_number = models.CharField(max_length=100, blank=True)
+    invoice_file = models.FileField(upload_to='invoices/', blank=True, null=True)
     received_date = models.DateField(auto_now_add=True)
-    invoice_file = models.FileField(upload_to='invoices/', null=True, blank=True)
+
+    def __str__(self):
+        return f"Inbound: {self.product.name} ({self.quantity})"
 
     def save(self, *args, **kwargs):
-        self.product.quantity += self.quantity
-        self.product.save()
+        is_new = self._state.adding
         super().save(*args, **kwargs)
 
+        if is_new:
+            print(f"🔄 Inbound: Increasing stock of {self.product.name} by {self.quantity}")
+            self.product.quantity += self.quantity
+            self.product.save()
+
+
+# ✅ Outbound Model (stock dispatched)
 class Outbound(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, blank=True)
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, related_name='outbounds_core'
+    )
+    customer = models.ForeignKey(
+        Customer, on_delete=models.SET_NULL, null=True, blank=True, related_name='outbound_customers_core'
+    )
     quantity = models.PositiveIntegerField()
     so_reference = models.CharField(max_length=100, blank=True)
-    dispatch_date = models.DateField(auto_now_add=True)
+    dispatch_date = models.DateField(default=timezone.now)
     delivery_note_file = models.FileField(upload_to='delivery_notes/', null=True, blank=True)
 
+    def __str__(self):
+        return f"Outbound: {self.product.name} ({self.quantity})"
+
     def save(self, *args, **kwargs):
-        self.product.quantity -= self.quantity
-        self.product.save()
+        is_new = self._state.adding
+
+        if is_new and self.product.quantity < self.quantity:
+            raise ValueError("Not enough stock to fulfill outbound transaction.")
+
         super().save(*args, **kwargs)
+
+        if is_new:
+            print(f"🔻 Outbound: Reducing stock of {self.product.name} by {self.quantity}")
+            self.product.quantity -= self.quantity
+            self.product.save()

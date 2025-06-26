@@ -1,43 +1,72 @@
-from django.shortcuts import render
 from rest_framework import viewsets, permissions, serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 import pandas as pd
 
-from inventory.models import Product
-from .models import Inbound, Outbound
-from .serializers import InboundSerializer, OutboundSerializer
-from users.permissions import IsOperatorOrAbove
+from .models import Product, Supplier, Customer, Inbound, Outbound
+from .serializers import (
+    ProductSerializer,
+    SupplierSerializer,
+    CustomerSerializer,
+    InboundSerializer,
+    OutboundSerializer,
+)
+from users.permissions import IsOperatorOrAbove  # Optional: custom permission
 
-# ✅ Regular ViewSets for CRUD
+
+# ✅ Product CRUD ViewSet
+class ProductViewSet(viewsets.ModelViewSet):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
+# ✅ Supplier CRUD ViewSet
+class SupplierViewSet(viewsets.ModelViewSet):
+    queryset = Supplier.objects.all()
+    serializer_class = SupplierSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
+# ✅ Customer CRUD ViewSet
+class CustomerViewSet(viewsets.ModelViewSet):
+    queryset = Customer.objects.all()
+    serializer_class = CustomerSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
+# ✅ Inbound: adds stock
 class InboundViewSet(viewsets.ModelViewSet):
     queryset = Inbound.objects.all()
     serializer_class = InboundSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def perform_create(self, serializer):
-        inbound = serializer.save()
-        product = inbound.product
-        product.quantity += inbound.quantity
-        product.save()
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context.update({"request": self.request})  # ✅ for invoice_file URL
+        return context
 
+    def perform_create(self, serializer):
+        serializer.save()
+
+# ✅ Outbound: subtracts stock
 class OutboundViewSet(viewsets.ModelViewSet):
     queryset = Outbound.objects.all()
     serializer_class = OutboundSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context.update({"request": self.request})  # ✅ for delivery_note_file URL
+        return context
+
     def perform_create(self, serializer):
-        outbound = serializer.save()
-        product = outbound.product
+        serializer.save()
 
-        if product.quantity < outbound.quantity:
-            raise serializers.ValidationError("Not enough stock for outbound transaction.")
 
-        product.quantity -= outbound.quantity
-        product.save()
 
-# ✅ CSV Upload API
+# ✅ CSV Upload Handler
 class UploadCSVView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 

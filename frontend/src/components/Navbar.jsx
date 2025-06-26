@@ -1,30 +1,55 @@
-import { Link } from 'react-router-dom';
-import toast from 'react-hot-toast';
+import { Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import API from '../services/api';
 
-toast.success("Outbound logged!");
-toast.error("Not enough stock!");
-
 function Navbar() {
   const [role, setRole] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     API.get('users/me/')
-      .then(res => setRole(res.data.role)) // Assuming backend has a `me` endpoint returning role
+      .then(res => setRole(res.data.role))
       .catch(() => setRole(''));
   }, []);
 
+  const handleLogout = () => {
+    localStorage.removeItem('access_token');
+    navigate('/login');
+  };
+
   return (
-    <nav className="bg-gray-800 text-white p-4 flex gap-4">
-      <Link to="/inventory">Inventory</Link>
-      {role !== 'Operator' && <Link to="/inbound">Inbound</Link>}
-      {role !== 'Operator' && <Link to="/outbound">Outbound</Link>}
-      {role === 'Admin' && <Link to="/upload">Upload CSV</Link>}
-      <button onClick={() => {
-        localStorage.removeItem('access_token');
-        window.location.href = '/login';
-      }}>Logout</button>
+    <nav className="bg-gray-800 text-white p-4 flex justify-between items-center shadow-md">
+      {/* Left side: Navigation links */}
+      <div className="flex gap-4 items-center">
+        <Link to="/inventory" className="hover:underline">
+          Inventory
+        </Link>
+
+        {role !== 'Operator' && (
+          <>
+            <Link to="/inbound" className="hover:underline">
+              Inbound
+            </Link>
+            <Link to="/outbound" className="hover:underline">
+              Outbound
+            </Link>
+          </>
+        )}
+
+        {role === 'Admin' && (
+          <Link to="/upload-csv" className="hover:underline">
+            Upload CSV
+          </Link>
+        )}
+      </div>
+
+      {/* Right side: Logout button */}
+      <button
+        onClick={handleLogout}
+        className="text-red-400 hover:text-red-200 transition"
+      >
+        Logout
+      </button>
     </nav>
   );
 }

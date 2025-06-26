@@ -2,6 +2,12 @@ import { useState } from 'react';
 import toast from 'react-hot-toast';
 import API from '../services/api';
 
+const endpointMap = {
+  products: 'upload/inventory/',  // assumes "products" == inventory
+  inbound: 'upload/inbound/',
+  outbound: 'upload/outbound/',
+};
+
 function UploadCSV() {
   const [file, setFile] = useState(null);
   const [type, setType] = useState('');
@@ -16,10 +22,15 @@ function UploadCSV() {
 
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("type", type);
+
+    const endpoint = endpointMap[type];
+    if (!endpoint) {
+      toast.error("Unknown upload type.");
+      return;
+    }
 
     try {
-      await API.post('upload_csv/', formData, {
+      await API.post(endpoint, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -29,19 +40,18 @@ function UploadCSV() {
       setFile(null);
       setType('');
     } catch (err) {
-      if (err.response && err.response.data) {
-        const errMsg = typeof err.response.data === 'string'
+      const errMsg =
+        err.response?.data?.error ||
+        (typeof err.response?.data === 'string'
           ? err.response.data
-          : Object.values(err.response.data).flat().join(', ');
-        toast.error(errMsg);
-      } else {
-        toast.error("Upload failed. Please try again.");
-      }
+          : Object.values(err.response?.data || {}).flat().join(', ')) ||
+        "Upload failed. Please try again.";
+      toast.error(errMsg);
     }
   };
 
   return (
-    <div className="p-6">
+    <div className="p-6 max-w-xl mx-auto">
       <h2 className="text-xl font-bold mb-4">Upload CSV</h2>
       <form onSubmit={handleUpload} className="space-y-4">
         <select
@@ -66,7 +76,7 @@ function UploadCSV() {
 
         <button
           type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 w-full"
         >
           Upload
         </button>

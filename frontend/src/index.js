@@ -11,7 +11,7 @@ root.render(
   <React.StrictMode>
     <App />
     <Toaster
-      position="top-right"
+      position="top-center"  // ✅ Changed from "top-right" to "top-center"
       reverseOrder={false}
       toastOptions={{
         success: {
