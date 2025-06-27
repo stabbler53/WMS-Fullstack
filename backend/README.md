@@ -1,72 +1,74 @@
 # WMS Backend (Django)
 
-## Overview
-Production-grade Warehouse Management System backend built with Django & DRF. Supports inventory, inbound, outbound, user/role management, audit logs, bulk upload, and more.
+This is the backend for the Warehouse Management System. It provides the REST API, admin panel, batch/expiry tracking, webhooks, and business logic.
 
-## Features
-- Inventory, inbound, outbound management
-- User roles: Admin, Manager, Operator
-- Audit logs, dashboard, low stock alerts
-- Bulk CSV upload, file attachments
+---
+
+## 🚀 Quick Start
+
+### 1. Install Dependencies
+```bash
+pip install -r requirements.txt
+```
+
+### 2. Migrate Database
+```bash
+python manage.py migrate
+```
+
+### 3. Create Superuser
+```bash
+python manage.py createsuperuser
+```
+
+### 4. Run the Server
+```bash
+python manage.py runserver
+```
+
+Or use Docker Compose:
+```bash
+docker-compose up backend
+```
+
+---
+
+## 🛠️ Features
 - JWT authentication
-- PostgreSQL database
-- Dockerized for production
-- Swagger/OpenAPI docs
+- Role-based permissions (admin, manager, operator)
+- Inventory, batch, and expiry tracking
+- FIFO outbound fulfillment
+- Webhook & integration hooks
+- CSV import/export
+- Audit logging
 
-## Setup
-1. Clone the repo and `cd backend`
-2. Create a `.env` file (see below)
-3. Build and run with Docker Compose:
-   ```sh
-   docker-compose up --build
-   ```
+---
 
-## Environment Variables (`.env` example)
-```
-DJANGO_SECRET_KEY=your-secret-key
-DJANGO_DEBUG=False
-DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1
-POSTGRES_DB=wms_db
-POSTGRES_USER=wms_user
-POSTGRES_PASSWORD=wms_pass
-POSTGRES_HOST=db
-POSTGRES_PORT=5432
-```
+## 📚 API Endpoints
+- `/api/products/` - Product CRUD
+- `/api/batches/` - Batch/expiry management
+- `/api/inbound/` - Inbound stock
+- `/api/outbound/` - Outbound stock
+- `/api/webhooks/` - Webhook management
+- `/api/webhook-deliveries/` - Webhook delivery logs
+- `/api/users/me/` - Current user info
 
-## Database Migration
-```sh
-docker-compose exec backend python manage.py migrate
+See the code for more endpoints and details.
+
+---
+
+## 🧪 Testing
+```bash
+python manage.py test
 ```
 
-## Superuser Creation
-```sh
-docker-compose exec backend python manage.py createsuperuser
-```
+---
 
-## API Usage
-- Obtain JWT: `POST /api/token/` (username, password)
-- Refresh JWT: `POST /api/token/refresh/`
-- Core endpoints: `/api/products/`, `/api/inbound/`, `/api/outbound/`, `/api/suppliers/`, `/api/customers/`
-- Bulk upload: `POST /api/upload-csv/` (file, type)
-- Stock reconciliation: `POST /api/reconcile-stock/`
-- Dashboard: `/api/dashboard/`
+## 👤 Default Admin Login
+- Username: `admin`
+- Password: `admin123` (or as set during setup)
 
-## API Documentation
-- Swagger: [http://localhost:8000/swagger/](http://localhost:8000/swagger/)
-- Redoc: [http://localhost:8000/redoc/](http://localhost:8000/redoc/)
+---
 
-## Media & File Uploads
-- Uploaded files (invoices, delivery notes) are stored in `/media/`
-
-## Testing
-```sh
-docker-compose exec backend python manage.py test
-```
-
-## Deployment
-- Use Docker Compose for local/prod
-- Set `DJANGO_DEBUG=False` and configure `ALLOWED_HOSTS` for production
-- Use Nginx as a reverse proxy (see docker/ for example configs)
-
-## License
+## 📄 License
 MIT 

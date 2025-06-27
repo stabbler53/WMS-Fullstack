@@ -1,60 +1,47 @@
-# WMS Frontend (React + Tailwind)
+# WMS Frontend (React)
 
-## Overview
-Modern, responsive frontend for the Warehouse Management System. Built with React, Tailwind CSS, and Recharts. Supports inventory, inbound, outbound, dashboard, user roles, and more.
+This is the frontend for the Warehouse Management System. It provides a modern UI for inventory, dashboard, batch tracking, and more.
 
-## Features
-- JWT authentication (login)
-- Role-based access (Admin, Manager, Operator)
-- Inventory, inbound, outbound management
-- Dashboard with charts, stats, and audit logs
-- Bulk CSV upload (admin only)
-- File attachments for inbound/outbound
-- Responsive Tailwind UI
-- Toast notifications for feedback
+---
 
-## Setup
-1. `cd frontend`
-2. Install dependencies:
-   ```sh
-   npm install
-   ```
-3. Create a `.env` file (see below)
-4. Start the app:
-   ```sh
-   npm start
-   ```
+## 🚀 Quick Start
 
-## Environment Variables (`.env` example)
+### 1. Install Dependencies
+```bash
+npm install
 ```
-REACT_APP_API_BASE_URL=http://localhost:8000/api/
+
+### 2. Start Development Server
+```bash
+npm start
 ```
-- Make sure this matches your backend API URL.
 
-## API Usage
-- All API calls are made to `${REACT_APP_API_BASE_URL}` (see `src/services/api.js`).
-- Login: `/token/` (POST, username & password)
-- Inventory: `/products/`
-- Inbound: `/inbound/`
-- Outbound: `/outbound/`
-- Dashboard: `/dashboard/`
-- Bulk upload: `/upload-csv/`
+- App runs at [http://localhost:3000](http://localhost:3000)
+- Connects to backend at [http://localhost:8000](http://localhost:8000)
 
-## Scripts
-- `npm start` — Run in development mode
-- `npm run build` — Build for production
-- `npm test` — Run tests
+---
 
-## Best Practices
-- Uses Tailwind for all styling (see `tailwind.config.js`)
-- Responsive and mobile-friendly layouts
-- Role-based route protection (`ProtectedRoute`, `RequireAdmin`)
-- Toast notifications for all user actions
-- Error and loading states handled in all pages
+## 🛠️ Features
+- Inventory, batch, and expiry management
+- Dashboard with charts
+- Role-based UI (admin, manager, operator)
+- Barcode display
+- CSV import/export
+- Responsive, modern design
 
-## Deployment
-- Build with `npm run build` and serve with any static file server
-- For Docker, see the provided `Dockerfile`
+---
 
-## License
+## 🏗️ Build for Production
+```bash
+npm run build
+```
+
+---
+
+## ⚙️ Environment Variables
+- `REACT_APP_API_BASE_URL` (default: `http://localhost:8000/api/`)
+
+---
+
+## 📄 License
 MIT
