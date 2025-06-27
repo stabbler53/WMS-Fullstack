@@ -4,3 +4,6 @@ djangorestframework-simplejwt
 psycopg2-binary
 django-cors-headers
 gunicorn
+django-filter
+drf-yasg
+django-jazzmin

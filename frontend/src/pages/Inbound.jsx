@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import API from '../services/api';
 import toast from 'react-hot-toast';
+import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 
 function Inbound() {
   const [products, setProducts] = useState([]);
@@ -99,72 +100,77 @@ function Inbound() {
   }
 
   return (
-    <div className="p-6 max-w-xl mx-auto">
-      <h2 className="text-xl font-bold mb-4">Inbound Form</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <select
-          name="product"
-          onChange={handleChange}
-          value={form.product}
-          required
-          className="w-full border p-2"
-        >
-          <option value="">Select Product</option>
-          {products.map((p) => (
-            <option key={p.id} value={p.id}>
-              {p.name} ({p.sku})
-            </option>
-          ))}
-        </select>
+    <div className="max-w-lg mx-auto space-y-6">
+      <div className="flex items-center gap-3 mb-2">
+        <ArrowDownTrayIcon className="h-7 w-7 text-green-500" />
+        <h2 className="text-2xl font-bold tracking-tight">Inbound Form</h2>
+      </div>
+      <div className="bg-white rounded-lg shadow p-6">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <select
+            name="product"
+            onChange={handleChange}
+            value={form.product}
+            required
+            className="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-green-200"
+          >
+            <option value="">Select Product</option>
+            {products.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.name} ({p.sku})
+              </option>
+            ))}
+          </select>
 
-        <select
-          name="supplier"
-          onChange={handleChange}
-          value={form.supplier}
-          className="w-full border p-2"
-        >
-          <option value="">Select Supplier (optional)</option>
-          {suppliers.map((s) => (
-            <option key={s.id} value={s.id}>
-              {s.name}
-            </option>
-          ))}
-        </select>
+          <select
+            name="supplier"
+            onChange={handleChange}
+            value={form.supplier}
+            className="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-green-200"
+          >
+            <option value="">Select Supplier (optional)</option>
+            {suppliers.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.name}
+              </option>
+            ))}
+          </select>
 
-        <input
-          type="text"
-          name="invoice_number"
-          placeholder="Invoice Number"
-          value={form.invoice_number}
-          onChange={handleChange}
-          className="w-full border p-2"
-        />
+          <input
+            type="text"
+            name="invoice_number"
+            placeholder="Invoice Number"
+            value={form.invoice_number}
+            onChange={handleChange}
+            className="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-green-200"
+          />
 
-        <input
-          type="number"
-          name="quantity"
-          placeholder="Quantity"
-          value={form.quantity}
-          onChange={handleChange}
-          min="1"
-          required
-          className="w-full border p-2"
-        />
+          <input
+            type="number"
+            name="quantity"
+            placeholder="Quantity"
+            value={form.quantity}
+            onChange={handleChange}
+            min="1"
+            required
+            className="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-green-200"
+          />
 
-        <input
-          type="file"
-          accept=".pdf,.jpg,.png"
-          onChange={(e) => setFile(e.target.files[0])}
-          className="w-full"
-        />
+          <input
+            type="file"
+            accept=".pdf,.jpg,.png"
+            onChange={(e) => setFile(e.target.files[0])}
+            className="w-full border border-gray-200 rounded"
+          />
 
-        <button
-          type="submit"
-          className="bg-blue-600 text-white py-2 px-4 rounded"
-        >
-          Submit Inbound
-        </button>
-      </form>
+          <button
+            type="submit"
+            className="w-full bg-green-600 text-white py-2 px-4 rounded font-semibold hover:bg-green-700 transition"
+          >
+            Submit Inbound
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

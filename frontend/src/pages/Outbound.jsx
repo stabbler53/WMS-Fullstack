@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../services/api';
 import toast from 'react-hot-toast';
+import { ArrowUpTrayIcon } from '@heroicons/react/24/outline';
 
 function Outbound() {
   const navigate = useNavigate();
@@ -75,11 +76,24 @@ function Outbound() {
 
       setTimeout(() => navigate('/inventory'), 1000);
     } catch (err) {
-      const msg =
-        err.response?.data
-          ? Object.values(err.response.data).flat().join(', ')
-          : 'Error submitting outbound.';
-      toast.error(msg);
+      let errorMsg = 'Error submitting outbound.';
+      
+      if (err.response?.data) {
+        if (typeof err.response.data === 'string') {
+          errorMsg = err.response.data;
+        } else if (typeof err.response.data === 'object') {
+          const errorValues = Object.values(err.response.data).flat();
+          errorMsg = errorValues.join(', ');
+        }
+      }
+      
+      // Limit error message length to prevent long toasts
+      if (errorMsg.length > 100) {
+        errorMsg = errorMsg.substring(0, 100) + '...';
+      }
+      
+      toast.error(errorMsg);
+      console.error('Outbound submission error:', err);
     }
   };
 
@@ -88,73 +102,77 @@ function Outbound() {
   }
 
   return (
-    <div className="p-6 max-w-xl mx-auto">
-      <h2 className="text-2xl font-bold mb-4">Outbound Dispatch</h2>
+    <div className="max-w-lg mx-auto space-y-6">
+      <div className="flex items-center gap-3 mb-2">
+        <ArrowUpTrayIcon className="h-7 w-7 text-red-500" />
+        <h2 className="text-2xl font-bold tracking-tight">Outbound Dispatch</h2>
+      </div>
+      <div className="bg-white rounded-lg shadow p-6">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <select
+            name="product"
+            value={form.product}
+            onChange={handleChange}
+            required
+            className="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-red-200"
+          >
+            <option value="">Select Product</option>
+            {products.map(p => (
+              <option key={p.id} value={p.id}>
+                {p.name} ({p.sku})
+              </option>
+            ))}
+          </select>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <select
-          name="product"
-          value={form.product}
-          onChange={handleChange}
-          required
-          className="w-full p-2 border rounded"
-        >
-          <option value="">Select Product</option>
-          {products.map(p => (
-            <option key={p.id} value={p.id}>
-              {p.name} ({p.sku})
-            </option>
-          ))}
-        </select>
+          <select
+            name="customer"
+            value={form.customer}
+            onChange={handleChange}
+            className="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-red-200"
+          >
+            <option value="">Select Customer (optional)</option>
+            {customers.map(c => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+          </select>
 
-        <select
-          name="customer"
-          value={form.customer}
-          onChange={handleChange}
-          className="w-full p-2 border rounded"
-        >
-          <option value="">Select Customer (optional)</option>
-          {customers.map(c => (
-            <option key={c.id} value={c.id}>
-              {c.name}
-            </option>
-          ))}
-        </select>
+          <input
+            type="text"
+            name="so_reference"
+            value={form.so_reference}
+            onChange={handleChange}
+            placeholder="Sales Order Reference (optional)"
+            className="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-red-200"
+          />
 
-        <input
-          type="text"
-          name="so_reference"
-          value={form.so_reference}
-          onChange={handleChange}
-          placeholder="Sales Order Reference (optional)"
-          className="w-full p-2 border rounded"
-        />
+          <input
+            type="number"
+            name="quantity"
+            value={form.quantity}
+            onChange={handleChange}
+            placeholder="Quantity"
+            min="1"
+            required
+            className="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-red-200"
+          />
 
-        <input
-          type="number"
-          name="quantity"
-          value={form.quantity}
-          onChange={handleChange}
-          placeholder="Quantity"
-          min="1"
-          required
-          className="w-full p-2 border rounded"
-        />
+          <input
+            type="file"
+            accept=".csv,.pdf,.jpg,.png"
+            onChange={(e) => setFile(e.target.files[0])}
+            className="w-full border border-gray-200 rounded"
+          />
 
-        <input
-          type="file"
-          accept=".csv,.pdf,.jpg,.png"
-          onChange={(e) => setFile(e.target.files[0])}
-          className="w-full"
-        />
-
-        <button
-          type="submit"
-          className="w-full bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition"
-        >
-          Submit Outbound
-        </button>
-      </form>
+          <button
+            type="submit"
+            className="w-full bg-red-600 text-white px-4 py-2 rounded font-semibold hover:bg-red-700 transition"
+          >
+            Submit Outbound
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

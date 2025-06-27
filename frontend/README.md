@@ -1,70 +1,60 @@
-# Getting Started with Create React App
+# WMS Frontend (React + Tailwind)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Overview
+Modern, responsive frontend for the Warehouse Management System. Built with React, Tailwind CSS, and Recharts. Supports inventory, inbound, outbound, dashboard, user roles, and more.
 
-## Available Scripts
+## Features
+- JWT authentication (login)
+- Role-based access (Admin, Manager, Operator)
+- Inventory, inbound, outbound management
+- Dashboard with charts, stats, and audit logs
+- Bulk CSV upload (admin only)
+- File attachments for inbound/outbound
+- Responsive Tailwind UI
+- Toast notifications for feedback
 
-In the project directory, you can run:
+## Setup
+1. `cd frontend`
+2. Install dependencies:
+   ```sh
+   npm install
+   ```
+3. Create a `.env` file (see below)
+4. Start the app:
+   ```sh
+   npm start
+   ```
 
-### `npm start`
+## Environment Variables (`.env` example)
+```
+REACT_APP_API_BASE_URL=http://localhost:8000/api/
+```
+- Make sure this matches your backend API URL.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## API Usage
+- All API calls are made to `${REACT_APP_API_BASE_URL}` (see `src/services/api.js`).
+- Login: `/token/` (POST, username & password)
+- Inventory: `/products/`
+- Inbound: `/inbound/`
+- Outbound: `/outbound/`
+- Dashboard: `/dashboard/`
+- Bulk upload: `/upload-csv/`
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Scripts
+- `npm start` — Run in development mode
+- `npm run build` — Build for production
+- `npm test` — Run tests
 
-### `npm test`
+## Best Practices
+- Uses Tailwind for all styling (see `tailwind.config.js`)
+- Responsive and mobile-friendly layouts
+- Role-based route protection (`ProtectedRoute`, `RequireAdmin`)
+- Toast notifications for all user actions
+- Error and loading states handled in all pages
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Deployment
+- Build with `npm run build` and serve with any static file server
+- For Docker, see the provided `Dockerfile`
 
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## License
+MIT

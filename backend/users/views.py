@@ -4,7 +4,7 @@ from django.shortcuts import render
 from rest_framework import generics, permissions
 from .models import User
 from .serializers import UserSerializer
-from .permissions import IsAdmin
+from .permissions import IsAdminUser
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -24,4 +24,4 @@ class CurrentUserView(APIView):
 class UserListView(generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [IsAdmin]  # ✅ Only admin can view all users
+    permission_classes = [IsAdminUser]  # Only admin can view all users
